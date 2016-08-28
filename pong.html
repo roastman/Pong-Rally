@@ -45,6 +45,11 @@ var normal = 19;
 var hard = 29;
 var insane = 39;
 
+var easyScore = 5;
+var normalScore = 20;
+var hardScore = 50;
+var insaneScore = 100;
+
 var small = 50;
 var medium = 100;
 var large = 150;
@@ -61,16 +66,16 @@ function resetBall() {
 	ballX = canvas.width/2;
 	ballY = canvas.height/2;
 	if(ballSpeedX == easy){
-			score = score - 1;
+			score = score - easyScore;
 	}
 	if(ballSpeedX == normal){
-			score = score - 10;
+			score = score - normalScore;
 	}
 	if(ballSpeedX == hard) {
-			score = score - 100;
+			score = score - hardScore;
 	}
 	if(ballSpeedX == insane) {
-			score = score - 1000;
+			score = score - insaneScore;
 	}
 	if(score > highscore) {
 			highscore = score;
@@ -156,16 +161,16 @@ function moveBall() {
 		if(ballY < paddle1Y + paddleHeight && ballY > paddle1Y){ // if ball is on paddle
 			ballSpeedX = -ballSpeedX; // bounce
 			if(ballSpeedX == easy){
-				score += 1
+				score += easyScore
 				}
 			if(ballSpeedX == normal){
-				score += 10
+				score += normalScore
 				}
 			if(ballSpeedX == hard) {
-				score += 100
+				score += hardScore
 				}
 			if(ballSpeedX == insane) {
-				score += 1000
+				score += insaneScore
 			}
 			
 	//ballY < paddle1Y + paddleHeight && ballY > paddle1Y
