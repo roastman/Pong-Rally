@@ -4,9 +4,16 @@
 <title>Pong Rally</title>
 </head>
 <body style="-webkit-user-select: none; background-color:#999; position:fixed; top:0; bottom:0; left:0; right:0; height:100%; width:100%:">
-<span style="color:white; font-size:30px; font-family:Arial;">Score: </span><span id="score" style="font-size:30px; font-family:Arial; color:white;"></span>
+
+	<span style="color:white; font-size:30px; font-family:Arial;">Score: </span><span id="score" style="font-size:30px; font-family:Arial; color:white;">0</span>
 <br>
-<div id ="buttons" style="display:inline-block; width:900px; margin-left:315px; margin-top:-50px; position:fixed;">
+	<span style="color:white; font-size:30px; font-family:Arial;">Money: </span><span id="money" style="font-size:30px; font-family:Arial; color:white;">0</span>
+<br>
+	<span style="color:white; font-size:30px; font-family:Arial;">Paddle Upgrades: </span><span id="upgradePaddle" style="font-size:30px; font-family:Arial; color:white;">0</span>
+<br>
+	<span style="color:white; font-size:30px; font-family:Arial;">Paddle Cost: </span><span id="paddleCost" style="font-size:30px; font-family:Arial; color:white;">100</span>
+
+<div id ="buttons" style="display:inline-block; width:900px; margin-left:150px; margin-top:-100px; position:fixed;">
 	<button onclick="gameDifficulty(easy,huge);" style="background:black;border:none; color:white; width:20%; font-size:20px; height:36px; margin-top:5px;">Easy</button>
 	<button onclick="gameDifficulty(normal,large);" style="background:black; border:none;color:white; width:20%; font-size:20px; height:36px; margin-top:5px;">Normal</button>
 	<button onclick="gameDifficulty(hard,medium);" style="background:black; border:none;color:white; width:20%; font-size:20px; height:36px; margin-top:5px;">Hard</button>
@@ -17,19 +24,26 @@
 
 
 <div id ="container" style="width:2000px;" ></div>
-	<canvas id="gameCanvas" style="margin-top:30px;padding-right: 0; margin-left:280px; display: block;  width: 800px;" width="800" height="500">
+	<canvas id="gameCanvas" style="margin-top:-80px;padding-right: 0; margin-left:350px; display: block;  width: 800px;" width="800" height="500">
 	</canvas> 
-	<div id = "scoreboard" style="border-radius:10px; text-align:center; position:relative; font-family:Arial; font-size:40px; margin-top:-500px;height:100px; width:250px; background:lime;">
+	<div id = "scoreboard" style="border-radius:10px; text-align:center; position:relative; font-family:Arial; font-size:40px; margin-top:-100px;height:100px; width:250px; background:lime;">
 		<span>Highscore</span>	
 		<br>
 		<span id="highscore1">0</span>
-	<h1 style=" text-align:center; font-family:Verdana;color:white;">
-	Pong Rally
-
-	</h1>
+	
 		
 	</div>	
+	<div id ="shop" style="position:fixed; margin-top:-400px; width:800px;">
+
+		<button onclick="buySize();" style="background:black; border:none;color:white; width:40%; font-size:20px; height:36px; margin-top:5px;">Bigger Paddle</button>
+
+		
+
+	</div>
+	
 </div>
+<p style="color:white; font-family:Arial; font-size:15px;">made by ajpari</p>
+
 <script>
 var canvas;
 var canvasContext;
@@ -55,16 +69,40 @@ var medium = 100;
 var large = 150;
 var huge = 200;
 
+var money = 0;
 var score = 0;
 var highscore =  localStorage.getItem("highscore") || 0;
 var displayHigh = document.getElementById('highscore1');
 
 var paddleHeight = 100;	
+var upgradePaddle = 0;
 const PADDLE_THICKNESS = 15;
+
+
+function buySize(){
+    var paddleCost = Math.floor(100 * Math.pow(1.1,upgradePaddle));  
+    if(money >= paddleCost) {
+		upgradePaddle = upgradePaddle + 1;                                  
+		money = money - paddleCost;                          
+		document.getElementById('upgradePaddle').innerHTML = upgradePaddle;  
+		document.getElementById('money').innerHTML = money;  
+		var paddleNextCost = Math.floor(100 * Math.pow(1.1,upgradePaddle));      
+		document.getElementById('paddleCost').innerHTML = paddleNextCost; 
+		paddleHeight += 1;
+	}
+};
+
+function upgrades() {
+	
+
+}
+
 function resetBall() {
 	
 	ballX = canvas.width/2;
 	ballY = canvas.height/2;
+	
+	
 	if(ballSpeedX == easy){
 			score = score - easyScore;
 	}
@@ -80,9 +118,11 @@ function resetBall() {
 	if(score > highscore) {
 			highscore = score;
 			localStorage.setItem('highscore', highscore);	
-			displayHigh.innerHTML = highscore;
+			displayHigh.innerHTML = highscore;	
 	}	
 
+	money += score; 
+	document.getElementById('money').innerHTML = money;
 	
 	score = 0;
 }
@@ -93,13 +133,10 @@ function gameScore() {
 function gameDifficulty(level, size) {
 	  
 	  ballSpeedX = level;
-	  paddleHeight = size;
+	  paddleHeight = size + upgradePaddle; // increases paddleHeight when difficulty is changed
 }
 
-function scoreBoard() {
-	
-	
-}
+
 
 function calculateMousePos(evt) {
 	var rect = canvas.getBoundingClientRect();
@@ -128,7 +165,6 @@ window.onload = function() {
 		drawGame();
 		bot();
 		gameScore();
-		console.log(ballSpeedX);
 		
 	},1000/FPS);
 	
